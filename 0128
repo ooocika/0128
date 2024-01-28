@@ -1,0 +1,717 @@
+DefaultUriBuidlerFactory(baseUrl)factory.encodingMode=EncodingMod.TEMPLATE_AND_VALUES
+
+val restTemplate=RestTemplate()restTemplate.uriTemplateHandler=factory
+//
+String baseUrl="http://example.org";DefaultUriBuidlerFactory factory=new DefaultUriBuidlerFactory(baseUrl);factory.setEncodingMode(EncodingMode.TEMPLATE_AND_VALUES);
+
+WebClient client=WebClient.builder().uriBuilderFactory(factory).build();
+//
+String baseUrl="http://example.com";DefaultUriBuilderFactory uriBuildFactory=new DefaultUriBuilderFactory(baseUrl);
+
+URI uri=uriBuildFactory.uriString("/hotels/{hotel}").queryParam("q","{q}").build("Westin","123");
+//
+URI uri=UriComponentsBuilder.fromPath("/hotel list/{city}").queryParam("q","{q}").encode().buildAndExpand("New York","foo+bar").toUri();
+//
+URI uri=UriComponentsBuilder.fromPath("/hotel list/{city}").queryParam("q","{q}").build("New York","foo+bar")
+//
+URI uri=UriComponentsBuilder.fromUriString("/hotel list/{city}?q={q}").build("New York","foo+bar");
+//
+String baseUri="http://example.com";DefaultUriBuilderFactory factory=new DefaultUriBuilderFactory(baseUri);factory.setEncodingMode(EncodingMode.TEMPLATE_AND_VALUES);
+
+RestTemplate restTemplate=new RestTemplate();restTemplate.setUriTemplateHandler(factory);
+
+WebClient client=WebClient.builder().uriBuilderFactory(factory).build();
+//
+HttpServletRequest request=...
+
+URI uri=ServletUriComponentsBuilder.fromRequest(request).replaceQueryParam("accountId","{id}").build("123");
+//
+HttpServletRequest request=...
+
+URI uri=ServletUriComponentsBuilder.fromRequest(request).path("/accounts").build().toUri();
+//
+HttpServletRequest request=...
+
+URI uri=ServletUriComponentsBuilder.fromServletMapping(request).path("/accounts").build().toUri();
+//
+@Controller
+@RequestMapping("/hotels/{hotel}")
+public class BookingController {
+
+  @GetMapping("/bookings/{booking}")
+  public ModeAndView getBooking(@PathVariable Long booking) {
+
+  }}
+
+  //
+  UriComponents uriComponents = MvcUriComponentsBuilder.fromMethodName(BookingController.class, "getBooking", 21)
+      .buildAndExpand(42);
+
+  URI uri = uriComponents.encode().toUri();
+  //
+  UriComponents uriComponents = MvcUriComponentsBuilder.fromMethodCall(on(BookingController.class).getBooking(21))
+      .buildAndExpand(42);
+
+  URI uri = uriComponents.encode().toUri();
+  //
+  UriComponentsBuilder base = ServletUriComponentBuilder.fromCurrentContextPath().path("/en");
+  MvcUriComponentsBuilder builder = MvcUriComponentsBuilder.relativeTo(base);builder.withMethodCall(on(BookingController.class).getBooking(21)).buildAndExpand(42);
+
+URI uri = uriComponents.encode().toUri();
+//
+@RequestMapping("/people/{id}/addresses")
+  public class PersonAddressController{
+
+    @RequestMapping("/{country}")
+  public HttpEntity<PersonAddress> getAddress(@PathVariable String country){...}
+  }
+
+  //
+@GetMapping("/quotes")
+  @ResponsBody
+  public DeferredResult<String> quotes(){
+  DeferredResult<String>deferredResult = new DeferredResult<String>();
+return deferredResult;
+}
+
+  deferredResult.setResult(result);
+
+  //
+  @PostMapping
+  public Callable<String> processUpload(final MultipartFile file) {
+
+    return new Callable<String>() {
+      public String call() throws Exception {
+
+        return "someView";
+      }
+    };
+  }
+
+  //
+  @GetMapping("/events")
+  public ResponseBodyEmitter handler() {
+    ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+
+    return emitter;
+  }
+
+  emitter.send("Hello onse");
+
+  emitter.send("Hello again");
+
+  emitter.complete();
+
+  //
+  @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAN_VALUE)
+  public SseEmitter handler() {
+    SseEmitter emitter = new SseEmitter();
+
+    return emitter;
+  }
+
+  emitter.send("Hello once");
+
+  emitter.send("Hello again");
+
+  emitter.complete();
+
+  //
+  @GetMapping("/download")
+  public StreamingResponseBody handle() {
+    return new StreamingResponseBody() {
+      @Override
+      public void writeTo(OutputStream outputStream) throws IOException {
+
+      }
+    };
+  }
+
+  //
+ContextSnapShot snapshot = new ContextSnapShot.captureAll();
+
+  try(
+  contextSnapshot.Scope scope = snapshot.setThreadLocals())
+  {
+
+  }
+
+  //
+  @RestController
+  @RequestMapping("/account")
+  public class AccountController {
+
+    @CrossOrigin
+    @GetMapping("/{id}")
+    public Account retrieve(@PathVariable Long id) {
+
+    }
+
+    @DeleteMapping("/{id}")
+    public void remove(@PathVariable Long id) {
+
+    }
+  }
+
+  //
+  @CrossOrigin(origins = "http://domain2.com", maxAge = 3600)
+  @RestController
+  @RequestMapping("/account")
+  public class AccountController {
+
+    @GetMapping("/{id}")
+    public Account retrieve(@PathVariable Long id) {
+
+    }
+
+    @DeleteMapping("/{id}")
+    public void remove(@PathVariable Long id) {
+
+    }
+  }
+
+  //
+  @CrossOrigin(maxAge = 3600)
+  @RestController
+  @RequestMapping("/account")
+  public class AccountController {
+
+    @CrossOrigin("http://domain2.com")
+    @GetMapping("/{id}")
+    public Account retrieve(@PathVariable Long id) {
+
+    }
+
+    @DeleteMapping("/{id}")
+    public void remove(@PathVariable Long id) {
+
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry){
+
+      registry.addMapping("/api/**")
+        .allowedOrigins("http://domain2.com")
+        .allowedMethods( "PUT", "DELETE")
+        .allowedHeaders(        "header1","header2","header3");
+      exposedHeaders("header1","header2");
+    .allowedCredentials(true).maxAge(3600);
+    
+    }
+
+  }
+
+  //
+  CorsConfiguration config = new CorsConfiguration();
+
+  config.setAllowCredentials(true);config.setAllowedOrigins("http://domain1.com");config.addAllowedHeader("*");config.addAllowedMethod("*");
+
+  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();source.registerCorsConfiguration("/**",config);
+
+  CorsFilter filter = new CorsFilter(source);
+  //
+  CachControl ccCachOneHour = CachControl.maxAge(1, TimeUnit.HOURS);
+
+  CachControl ccNoStore = CachControl.noStore();
+
+  CachControl ccNoCache = CachControl.maxAge(10,
+      TimeUnit.DAYS).noTransform.cachePublic();
+
+  //
+@GetMapping("/book/{id}")
+  public ResponseEntity<Book> showBook(@PathVariable Long id){
+
+  Book book = findBook(id);
+  String version = book.getVersion();
+  
+return ResponseEntity
+  .ok()
+  .cachControl(CachControl.maxAge(30,TimeUnit.DAYS))
+  .eTage(version)
+  .body(book);
+}
+
+  //
+@RequestMapping
+  public String myHandleMethod(WebRequest request, Model model){
+
+  long eTag = ...
+    if(request.checkNotModified(eTag)){
+    return null;
+    }
+
+  model.addAttribute(..);
+  return "myViewName";
+  }
+
+  //
+@Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer{
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry){
+      registry.freeMarker();
+    }
+
+    @Bean
+    public FreeMarkerConfigurer freeMarkerConfigurer(){
+      freeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+      configurer.setTemplateLoaderPath("/WEB-INF/freemarker");
+    return configurer;
+    }
+  }
+
+  //
+  protected Map<String, ?> referenceData(HttpServletRequest request) throws Exception {
+    Map<String, String> cityMap = new LinkedHashMap<>();
+    cityMap.put("LDN", "London");
+    cityMap.put("PRS", "Paris");
+    cityMap.put("NYC", "New York");
+
+    Map<String, Object> model = new HashMap<>();
+    model.put("cities", cityMap);
+    return model;
+
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+      registry.groovy();
+    }
+
+    @Bean
+    public GroovyConfigurer groovyMarkupConfigurer()
+        GroovyMarkupConfigurer configurer = new GroovyMarkupConfigurer();
+    configurer.setResourceLoaderPath("/WEB-INF/");
+return configurer;
+
+  
+  
+  }
+
+    //
+    @Configuration
+    @EnableWebMvc
+    public class WebConfig implements WebMvcConfigurer {
+
+      @Override
+      public void configureViewResolvers(ViewResolverRegistry registry) {
+        registry.scriptTemplate();
+      }
+
+    @Bean
+    public ScriptTemplateConfigurer configurer(){
+      ScriptTemplateConfigurer configurer = new ScriptTemplateConfigurer();
+      configurer.setEngineName("nashorn")
+      configurer.setScripts("mustache.js");
+      configurer.setRenderObject("Mustache");
+      configurer.setRenderFunction("render");
+      
+
+        
+    return configurer;
+    }
+    }
+
+    //
+    @Configuration
+    public class SampleController {
+
+    @GetMapping("/sample")
+    public String test(Model model){
+      model.addAttribute("title", "Sample title")
+        model.addAttribute("body", "Sample body");
+      return "template";
+      
+    }
+    }
+
+    //
+    @Configuration
+    @EnableWebMvc
+    public class WebConfig implements WebMvcConfigurer {
+
+      @Override
+      public void configureViewResolvers(ViewResolverRegistry registry) {
+        registry.scriptTemplate();
+      }
+
+  @Bean
+  public ScriptTemplateConfigurer configurer(){
+    ScripttemplateConfigurer configurer = new ScriptTemplateConfigurer();
+    configurer.setEngineName("nashorn")
+      configurer.setScripts("polyfill.js", "handlebars.js", "render.js");
+    configurer.setSharedEngine(false);
+    return configurer;
+  }
+    }
+
+    //
+function render(template, model){
+  var compiledTemplate = Handlebars.compile(template);
+  return compiledTemplate(model);
+}
+//
+public class Preferences{
+
+  private boolean receiveNewsletter;
+  private String[] interests;
+  private String favouriteWord;
+
+  public boolean isReceiveNewsletter(){
+    return receiveNewsletter;
+  }
+
+  public void setReceiveNewsletter(boolean receiveNewsletter){
+    this.receiveNewsletter = receiveNewsletter;
+  }
+
+  public String[] getInterests(){
+    return interests;
+  }
+  public void setInterests(String[] interests){
+    this.interests = interests;
+  }
+
+  public String getFavouriteWord(){
+    return favouriteWord;
+  }
+
+  public void setFavouriteWord(String favouriteWord){
+    this.favoirteWord = favouriteWord;
+  }
+  
+}
+//
+public class UserValidator implements Validator{
+
+  public boolean supports(Class candidate){
+    return User.class.isAssignableFrom(candidate);
+  }
+
+  public void validate(Object obj, Errors errors){
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "required","Field is required");
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "required","Field is required");
+  }
+}
+
+    //
+@RequestMapping(method = ReqestMethod.DELETE)
+  public String deletePet(@PathVariable int ownerId, @PathVariable int petId){
+  this.clinic.deletePet(petId);
+  return "redirect:/owners/"+ownerId};
+
+  }
+
+  //
+  public class SampleContentAtomView extends AbstractAtomFeedView {
+
+    @Override
+    protected void buildFeedMetadate(Map<String, Object> model,
+        Feed feed, HttpServletRequest request) {
+
+    }
+
+    @Override
+    protected List<Entry> buildFeedEntries(Map<String, Object> model,
+        HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+    }
+
+  }
+
+  //
+  public class SampleContentRssView extends AbstractRssFeedView {
+
+    @Override
+    protected void buildFeedMetadate(Map<String, Object> model,
+        Channel feed, HttpServletRequest request) {
+
+    }
+
+    @Override
+    protected List<Item> buildFeedItems(Map<String, Object> model,
+        HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+    }
+  }
+
+  //
+  public class PdWordList extends AbstractPdfView {
+
+    protected void buildPdfDocument(Map<String, Object> model, Document doc, PdfWriter writer,
+        HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+      List<String> words = (List<String>) model.get("wordList");
+      for (String word : words) {
+        doc.add(new Paragraph(word));
+      }
+
+    }
+  }
+
+  //
+  @EnableWebMvc
+  @ComponentScan
+  @Configuration
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Bean
+    public XsltViewResolver xsltViewResolver() {
+      XsltViewResolver viewResolver = new XsltViewResolver();
+      viewResolver.setPrefix("/WEB-INF/xsl/");
+      viewResolver.setSuffix(".xslt");
+      return viewResolver;
+    }
+  }
+
+  //
+@Controller
+  public class XsltController
+
+  @RequestMapping("/")
+
+  public String home(Model model) throws Exception{
+  Document document = 
+    DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+  Element root = document.createElement("wordList");
+
+  List<String> words = Arrays.asList("Hello", "Spring", "Framework");
+  for(String word : words){
+    Element wordNode = document.createElement("word");
+    Text textNode = document.createTextNode(word);
+    wordNode.appendChild(textNode);
+    root.appendChild(wordNode);
+  }
+ 
+model.addAttribute("wordList", root);
+  return "home";
+
+}}
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig {
+
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+      DataTimeFormatterRegister registrar = new DataTimeFormatterRegister();
+      registrar.setUseIsoFormat(true);
+      registrar.registerFormatters(registry);
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public Validator getValidator() {
+
+    }
+  }
+
+  //
+  @Controller
+  public class MyController {
+
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+      binder.addValidators(new FooValidator());
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(new LocaleChangeInterceptor());
+      registry.addInterceptor(new ThemeChangeInterceptor()).addPathPatterns("/**").excludePathPatterns("/admin/**");
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+      configurer.mediaType("json", MedioType.APPLICATION_JSON);
+      configurer.medioType("xml", MediaType.APPLICATION_XML);
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfiguration implements WebMvcConfigurer {
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>>converters){
+      Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+      .indentOutput(true)
+        .dataFormat(new SimpleDateFormat("yyyy-MM-dd"))
+        .modulesToInstall(new ParameterNamesModule());
+      converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+      converters.add(new
+                    MappingJackson2XmlHttpMessageConverter(builder.createXmlMapper(true).build()));
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+      registry.addViewController("/").setViewName("home");
+
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+      registry.enableContentNegotiation(new MappingJackson2JsonView());
+      registry.jsp();
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+      registry.enableContentNegotiation(new MappingJackson2JsonView());
+      registry.freeMarker().cach(false);
+    }
+
+    @Bean
+    public FreeMarkerConfigurer freeMarkerConfigurer() {
+      FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+      configurer.setTemplateLoaderPath("/freemarker");
+      return configurer;
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry){
+      registry.addResourceHandler("/resources/**").
+        addResourceLocations("/public", "classpath:/static/");
+      .setCachControl(CachControl.maxAge(Duration.ofDAYS(365)));
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry){
+      registry.addResourceHandler("/resources/**").
+        .addResourceLocations("/public/")
+        .resourceChain(true)
+        .addResolver(new
+                    VersionResourceResolver().addContentVersionStrategy("/**"));
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+      configurer.enable();// myCustomDefaultServlet
+    }
+  }
+
+  //
+  @Configuration
+  @EnableWebMvc
+  public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+      configurer.addPathPrefix("/api",
+          HandlerTypePredicate.forAnnotation(RestController.class));
+    }
+
+    private PathPatternParser patternParser() {
+
+    }
+  }
+
+  ///
+  @Configuration
+  public class WebConfig extends DelegatingWebMvcConfiguration {
+
+  }
+
+  //
+  @Configuration
+  public class MyPostProcessor implements BeanPostProcessor {
+
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeanException {
+
+    }
+}
+
+// 5.4.1. WebSocket API 1049P
